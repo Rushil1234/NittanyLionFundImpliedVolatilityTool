@@ -10,7 +10,7 @@ from scipy.stats import norm
 background_image_url = "https://raw.githubusercontent.com/nwt5144/nittanylionfundimpliedvolatilitytool/main/nittany_lion_fund_llc_psu_logo.jfif"
 
 # Custom CSS to create a header with the logo as the background
-custom_css = f"""
+custom_css = f"""    
 <style>
 /* Remove default padding and margin from the top of the app */
 .stApp {{
@@ -30,17 +30,32 @@ custom_css = f"""
     opacity: 1; /* Adjust opacity to make the logo subtle */
     margin-bottom: 20px; /* Space between header and content */
 }}
+/* Apply a background color to the main app container */
+.main {{
+    background-color: rgb(189, 215, 238);
+    padding: 20px; /* Add padding to the container */
+}}
 
 /* Style the title to be centered and readable */
 h1 {{
-    color: #003087; /* Nittany Lion Fund blue color */
+    color: rgb(0, 51, 102); /* Primary color */
     text-align: center;
     padding-top: 20px; /* Space above the title */
 }}
-
+/* Style subheaders */
+h3 {{
+    color: rgb(0, 51, 102);
+}}
+/* Style text */
+p, li, div {{
+    color: rgb(112, 121, 125); /* Text color */
+}}
 /* Ensure content below the header has enough padding */
 div[data-testid="stAppViewContainer"] > div {{
     padding-top: 20px; /* Reduced padding to ensure content is visible */
+}}
+.stButton > button {{
+    background-color: rgb(5, 91, 73); /* Accent color for buttons */
 }}
 </style>
 """
@@ -171,39 +186,44 @@ class ImpliedVolatilityAnalyzer:
         hist_vol_30d = self.get_historical_volatility(days=30)
         hist_vol_1y = self.get_historical_volatility(days=252)
 
-        st.write(f"### Implied Volatility Metrics for {self.stock.info['longName']} ({self.ticker})")
-        st.write(f"**Current Price:** ${self.current_price:.2f}")
-        st.write("---")
+        st.markdown(f"<h3 style='color: rgb(0, 51, 102);'>Implied Volatility Metrics for {self.stock.info['longName']} ({self.ticker})</h3>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'><strong>Current Price:</strong> ${self.current_price:.2f}</p>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: 1px solid rgb(112, 121, 125);'>", unsafe_allow_html=True)
 
-        st.write("#### Implied Volatilities")
-        st.write(f"- **Nearest (Exp: {nearest_date})**: Strike: ${nearest_strike:.2f} ({nearest_type.upper()}), IV: {nearest_iv*100:.2f}%")
-        st.write(f"- **~3 Months (Exp: {three_month_date})**: Strike: ${three_month_strike:.2f} ({three_month_type.upper()}), IV: {three_month_iv*100:.2f}%")
-        st.write(f"- **~6 Months (Exp: {six_month_date})**: Strike: ${six_month_strike:.2f} ({six_month_type.upper()}), IV: {six_month_iv*100:.2f}%")
-        st.write(f"- **~1 Year (Exp: {one_year_date})**: Strike: ${one_year_strike:.2f} ({one_year_type.upper()}), IV: {one_year_iv*100:.2f}%")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Implied Volatilities</h4>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>Nearest (Exp: {nearest_date})</strong>: Strike: ${nearest_strike:.2f} ({nearest_type.upper()}), IV: {nearest_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~3 Months (Exp: {three_month_date})</strong>: Strike: ${three_month_strike:.2f} ({three_month_type.upper()}), IV: {three_month_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~6 Months (Exp: {six_month_date})</strong>: Strike: ${six_month_strike:.2f} ({six_month_type.upper()}), IV: {six_month_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~1 Year (Exp: {one_year_date})</strong>: Strike: ${one_year_strike:.2f} ({one_year_type.upper()}), IV: {one_year_iv*100:.2f}%</p>", unsafe_allow_html=True)
 
-        st.write("#### Expected Price Movements (IV)")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Expected Price Movements (IV)</h4>", unsafe_allow_html=True)
         for iv, exp_date in zip([nearest_iv, three_month_iv, six_month_iv, one_year_iv], [nearest_date, three_month_date, six_month_date, one_year_date]):
             if not np.isnan(iv):
                 t, _ = self._calculate_time_to_expiry(exp_date)
                 expected_move = self.current_price * iv * np.sqrt(t)
-                st.write(f"- By {exp_date}: ±${expected_move:.2f}")
+                st.markdown(f"<p style='color: rgb(112, 121, 125);'>- By {exp_date}: ±${expected_move:.2f}</p>", unsafe_allow_html=True)
 
-        st.write("#### Historical Volatility")
-        st.write(f"- **30-Day**: {hist_vol_30d:.2f}%")
-        st.write(f"- **1-Year**: {hist_vol_1y:.2f}%")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Historical Volatility</h4>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>30-Day</strong>: {hist_vol_30d:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>1-Year</strong>: {hist_vol_1y:.2f}%</p>", unsafe_allow_html=True)
 
-        st.write("#### Expected Price Movements (HV)")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Expected Price Movements (HV)</h4>", unsafe_allow_html=True)
         for hv, days in zip([hist_vol_30d, hist_vol_1y], [30, 252]):
             if not np.isnan(hv):
                 t = days / 252
                 expected_move = self.current_price * (hv / 100) * np.sqrt(t)
-                st.write(f"- Over {days} days: ±${expected_move:.2f}")
+                st.markdown(f"<p style='color: rgb(112, 121, 125);'>- Over {days} days: ±${expected_move:.2f}</p>", unsafe_allow_html=True)
 
-        st.write("#### Explanation")
-        st.write("- **Implied Volatility (IV)**: Represents expected future price fluctuations.")
-        st.write("- **Expected Price Movements (IV)**: Shows potential stock price movement by expiration.")
-        st.write("- **Historical Volatility (HV)**: Reflects past price fluctuations.")
-        st.write("- **IV vs. HV**: Compare to assess if options are overpriced or underpriced.")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Explanation</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<ul style='color: rgb(112, 121, 125);'>"
+            "<li><strong>Implied Volatility (IV)</strong>: Represents expected future price fluctuations.</li>"
+            "<li><strong>Expected Price Movements (IV)</strong>: Shows potential stock price movement by expiration.</li>"
+            "<li><strong>Historical Volatility (HV)</strong>: Reflects past price fluctuations.</li>"
+            "<li><strong>IV vs. HV</strong>: Compare to assess if options are overpriced or underpriced.</li>"
+            "</ul>",
+            unsafe_allow_html=True
+        )
 
     def display_data_for_excel(self):
         metrics = self.get_iv_by_timeframes()
@@ -216,9 +236,10 @@ class ImpliedVolatilityAnalyzer:
         hist_vol_30d = self.get_historical_volatility(days=30)
         hist_vol_1y = self.get_historical_volatility(days=252)
 
-        st.write("## For each of following outputs: Copy the data using the link that appears when hovering over the output titles")
-        st.write("## Paste into cell C8 in \"Table\" Excel Sheet")
-        # Copyable IV Data
+        st.markdown("<h2 style='color: rgb(0, 51, 102);'>Data for Excel Integration</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='color: rgb(112, 121, 125);'>For each of the following outputs: Copy the data using the link that appears when hovering over the output titles</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: rgb(112, 121, 125);'>Paste into cell C8 in \"Table\" Excel Sheet</p>", unsafe_allow_html=True)
+
         iv_chart = "Expiration Date\tStrike Price\tOption Type\tImplied Volatility (%)\n"
         iv_chart += f"{nearest_date}\t{nearest_strike:.2f}\t{nearest_type.upper()}\t{nearest_iv*100:.2f}\n"
         iv_chart += f"{three_month_date}\t{three_month_strike:.2f}\t{three_month_type.upper()}\t{three_month_iv*100:.2f}\n"
@@ -226,7 +247,7 @@ class ImpliedVolatilityAnalyzer:
         iv_chart += f"{one_year_date}\t{one_year_strike:.2f}\t{one_year_type.upper()}\t{one_year_iv*100:.2f}"
         st.code(iv_chart, language="text")
 
-        st.write("## Paste into cell C14 in \"Table\" Excel Sheet")
+        st.markdown("<p style='color: rgb(112, 121, 125);'>Paste into cell C14 in \"Table\" Excel Sheet</p>", unsafe_allow_html=True)
         # Copyable Expected Price Movements (IV)
         expected_moves_chart = "Expiration Date\tExpected Price Movement ($)\n"
         for iv, exp_date in zip([nearest_iv, three_month_iv, six_month_iv, one_year_iv], [nearest_date, three_month_date, six_month_date, one_year_date]):
@@ -237,7 +258,7 @@ class ImpliedVolatilityAnalyzer:
         st.code(expected_moves_chart.strip(), language="text")
 
 
-        st.write("## Paste into cell C20 in \"Table\" Excel Sheet")
+        st.markdown("<p style='color: rgb(112, 121, 125);'>Paste into cell C20 in \"Table\" Excel Sheet</p>", unsafe_allow_html=True)
         # Copyable Historical Volatility Data
         hv_chart = "Period\tHistorical Volatility (%)\tExpected Price Movement ($)\n"
         expected_move_30d = self.current_price * (hist_vol_30d / 100) * np.sqrt(30 / 252) if not np.isnan(hist_vol_30d) else np.nan
@@ -245,7 +266,7 @@ class ImpliedVolatilityAnalyzer:
         hv_chart += f"30-Day\t{hist_vol_30d:.2f}\t{expected_move_30d:.2f}\n"
         hv_chart += f"1-Year\t{hist_vol_1y:.2f}\t{expected_move_1y:.2f}"
         st.code(hv_chart, language="text")
-
+        st.markdown("<p style='color: rgb(112, 121, 125);'>Paste into cell C5 in \"Monte Carlo\" Excel Sheet</p>", unsafe_allow_html=True)
         st.write("## Paste into cell C5 in \"Monte Carlo\" Excel Sheet")
 
         # Copyable Monte Carlo Data (full dataset with averaged paths)
@@ -330,10 +351,9 @@ class ImpliedVolatilityAnalyzer:
         ax.set_ylabel("Stock Price ($)")
         ax.legend()
         st.pyplot(fig)
-
-        st.write("#### Simulation Summary")
-        st.write(f"- **Starting Price**: ${S0:.2f}")
-        st.write(f"- **Ending Prices (1 Year)**:")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Simulation Summary</h4>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>Starting Price</strong>: ${S0:.2f}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>Ending Prices (1 Year)</strong>:</p>", unsafe_allow_html=True)
         for i, price in enumerate(sorted_paths[-1, :]):
             st.write(f"  - Path {i+1}: ${price:.2f}")
 
@@ -455,42 +475,47 @@ class PortfolioImpliedVolatilityAnalyzer:
         nearest_date, three_month_date, six_month_date, one_year_date, \
         corr_matrix = portfolio_metrics
 
-        st.write("### Portfolio Implied Volatility")
-        st.write(f"**Total Portfolio Value:** ${self.total_portfolio_value:,.2f}")
-        st.write("#### Portfolio Composition")
+        st.markdown("<h3 style='color: rgb(0, 51, 102);'>Portfolio Implied Volatility</h3>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'><strong>Total Portfolio Value:</strong> ${self.total_portfolio_value:,.2f}</p>", unsafe_allow_html=True)
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Portfolio Composition</h4>", unsafe_allow_html=True)
         for ticker, weight, price in zip(self.tickers, self.weights, self.current_prices):
             position_value = self.total_portfolio_value * weight
-            st.write(f"""
-            - {ticker}: {weight*100:.2f}% (${position_value:,.2f},
-            Current Price: ${price:.2f})
-            """)
+            st.markdown(
+                f"""
+                <p style='color: rgb(112, 121, 125);'>
+                - {ticker}: {weight*100:.2f}% (${position_value:,.2f},
+                Current Price: ${price:.2f})
+                </p>
+                """,
+                unsafe_allow_html=True
+            )
 
-        st.write("#### Correlation Matrix")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Correlation Matrix</h4>", unsafe_allow_html=True)
         if corr_matrix is not None and len(self.tickers) > 1:
             corr_df = pd.DataFrame(corr_matrix, index=self.tickers, columns=self.tickers)
-            st.table(corr_df.round(2))
+            st.dataframe(corr_df.round(2))
         else:
-            st.write("Correlation matrix not available (less than 2 stocks).")
+            st.markdown("<p style='color: rgb(112, 121, 125);'>Correlation matrix not available (less than 2 stocks).</p>", unsafe_allow_html=True)
 
-        st.write("#### Implied Volatilities")
-        st.write(f"- **Nearest (Exp: {nearest_date})**: IV: {nearest_iv*100:.2f}%")
-        st.write(f"- **~3 Months (Exp: {three_month_date})**: IV: {three_month_iv*100:.2f}%")
-        st.write(f"- **~6 Months (Exp: {six_month_date})**: IV: {six_month_iv*100:.2f}%")
-        st.write(f"- **~1 Year (Exp: {one_year_date})**: IV: {one_year_iv*100:.2f}%")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Implied Volatilities</h4>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>Nearest (Exp: {nearest_date})</strong>: IV: {nearest_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~3 Months (Exp: {three_month_date})</strong>: IV: {three_month_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~6 Months (Exp: {six_month_date})</strong>: IV: {six_month_iv*100:.2f}%</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: rgb(112, 121, 125);'>- <strong>~1 Year (Exp: {one_year_date})</strong>: IV: {one_year_iv*100:.2f}%</p>", unsafe_allow_html=True)
 
         # Calculate and display expected moves in dollars and percentages
-        st.write("#### Expected Portfolio Movements (IV)")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Expected Portfolio Movements (IV)</h4>", unsafe_allow_html=True)
         ivs = [nearest_iv, three_month_iv, six_month_iv, one_year_iv]
         dates = [nearest_date, three_month_date, six_month_date, one_year_date]
         for iv, exp_date in zip(ivs, dates):
             if not np.isnan(iv):
                 t = self._calculate_time_to_expiry(exp_date)
                 expected_move_dollars = self.total_portfolio_value * iv * np.sqrt(t)
-                expected_move_percent = iv * np.sqrt(t) * 100  # Percentage move = IV * sqrt(t) * 100
-                st.write(f"- By {exp_date}: ±${expected_move_dollars:,.2f} (±{expected_move_percent:.2f}%)")
+                expected_move_percent = iv * np.sqrt(t) * 100
+                st.markdown(f"<p style='color: rgb(112, 121, 125);'>- By {exp_date}: ±${expected_move_dollars:,.2f} (±{expected_move_percent:.2f}%)</p>", unsafe_allow_html=True)
 
         # Copyable Portfolio IV Data with Expected Moves
-        st.write("## Paste this output into cell F1 in Excel File")
+        st.markdown("<h2 style='color: rgb(0, 51, 102);'>Paste this output into cell F1 in Excel File</h2>", unsafe_allow_html=True)
         iv_chart = "Expiration Date\tImplied Volatility (%)\tExpected Move ($)\tExpected Move (%)\n"
         for iv, exp_date in zip(ivs, dates):
             if not np.isnan(iv):
@@ -500,27 +525,36 @@ class PortfolioImpliedVolatilityAnalyzer:
                 iv_chart += f"{exp_date}\t{iv*100:.2f}\t{expected_move_dollars:,.2f}\t{expected_move_percent:.2f}\n"
         st.code(iv_chart.strip(), language="text")
 
-        st.write("#### Explanation")
-        st.write("- **Portfolio IV**: Calculated as a weighted average of individual stock IVs, adjusted for historical correlations between stocks (based on 252 days of historical data).")
-        st.write("- **Expected Portfolio Movements**: Represents the potential portfolio value fluctuation (±) by expiration, in both dollars (based on total portfolio value) and percentages.")
-        st.write("- **Time Frames**: Match the expiration dates used in the single stock analysis.")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Explanation</h4>", unsafe_allow_html=True)
+        st.markdown(
+            "<ul style='color: rgb(112, 121, 125);'>"
+            "<li><strong>Portfolio IV</strong>: Calculated as a weighted average of individual stock IVs, adjusted for historical correlations between stocks (based on 252 days of historical data).</li>"
+            "<li><strong>Expected Portfolio Movements</strong>: Represents the potential portfolio value fluctuation (±) by expiration, in both dollars (based on total portfolio value) and percentages.</li>"
+            "<li><strong>Time Frames</strong>: Match the expiration dates used in the single stock analysis.</li>"
+            "</ul>",
+            unsafe_allow_html=True
+        )
 
 # Streamlit Navigation
-st.sidebar.title("Navigation")
+st.sidebar.markdown("<h2 style='color: rgb(0, 51, 102);'>Navigation</h2>", unsafe_allow_html=True)
 page = st.sidebar.selectbox("Select a page:", ["Implied Volatility Calculator", "Portfolio Implied Volatility"])
 
 # Page 1: Implied Volatility Calculator (Single Stock)
 if page == "Implied Volatility Calculator":
-    st.title("📈 Implied Volatility Calculator")
-    st.write("Enter a stock ticker to retrieve its implied volatility for different expirations.")
+    st.markdown("<h1 style='color: rgb(0, 51, 102);'>📈 Implied Volatility Calculator</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: rgb(112, 121, 125);'>Enter a stock ticker to retrieve its implied volatility for different expirations.</p>", unsafe_allow_html=True)
 
-    ticker = st.text_input("Enter a stock ticker:", "AAPL")
+    ticker = st.text_input("Enter a stock ticker:", "AAPL", key="stock_ticker_input")
 
     if st.button("Analyze"):
         try:
             analyzer = ImpliedVolatilityAnalyzer(ticker)
-            st.write("## Analysis Results")
+            st.markdown("<h2 style='color: rgb(0, 51, 102);'>Analysis Results</h2>", unsafe_allow_html=True)
             analyzer.display_iv_metrics()
+            st.markdown(
+                "<hr style='border: 1px solid rgb(112, 121, 125);'>",
+                unsafe_allow_html=True
+            )
             analyzer.display_data_for_excel()
             analyzer.monte_carlo_simulation()
         except Exception as e:
@@ -528,18 +562,18 @@ if page == "Implied Volatility Calculator":
 
 # Page 2: Portfolio Implied Volatility
 elif page == "Portfolio Implied Volatility":
-    st.title("📊 Portfolio Implied Volatility")
-    st.write("Enter up to 12 stocks, their respective weights, and the total portfolio value to calculate the portfolio's implied volatility and expected movements over different time frames.")
+    st.markdown("<h1 style='color: rgb(0, 51, 102);'>📊 Portfolio Implied Volatility</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: rgb(112, 121, 125);'>Enter up to 12 stocks, their respective weights, and the total portfolio value to calculate the portfolio's implied volatility and expected movements over different time frames.</p>", unsafe_allow_html=True)
 
     # Total Portfolio Value Input
     total_portfolio_value = st.number_input("Total Portfolio Value ($):", min_value=0.0, value=1000000.0, step=1000.0, format="%.2f")
 
     # Create two columns for tickers and weights
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([2, 1])
 
     # Left column: Stock tickers
     with col1:
-        st.subheader("Stock Tickers")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Stock Tickers</h4>", unsafe_allow_html=True)
         tickers = []
         for i in range(12):
             ticker = st.text_input(f"Stock {i+1}:", key=f"ticker_{i}")
@@ -547,7 +581,7 @@ elif page == "Portfolio Implied Volatility":
 
     # Right column: Weights
     with col2:
-        st.subheader("Weights (%)")
+        st.markdown("<h4 style='color: rgb(0, 51, 102);'>Weights (%)</h4>", unsafe_allow_html=True)
         weights = []
         for i in range(12):
             weight = st.number_input(f"Weight {i+1} (%):", min_value=0.0, max_value=100.0, value=0.0, step=0.1, key=f"weight_{i}")
@@ -556,13 +590,14 @@ elif page == "Portfolio Implied Volatility":
     if st.button("Calculate Portfolio IV"):
         try:
             # Validate weights
-            total_weight = sum(w for w in weights if w is not None)
-            if abs(total_weight - 100.0) > 0.01:
-                st.error(f"Total weight must equal 100%. Current total: {total_weight:.2f}%")
-            elif total_portfolio_value <= 0:
-                st.error("Total portfolio value must be greater than zero.")
-            else:
+           total_weight = sum(w for w in weights if w is not None)
+           if abs(total_weight - 100.0) > 0.01:
+               st.error(f"Total weight must equal 100%. Current total: {total_weight:.2f}%")
+           elif total_portfolio_value <= 0:
+               st.error("Total portfolio value must be greater than zero.")
+           else:
                 analyzer = PortfolioImpliedVolatilityAnalyzer(tickers, weights, total_portfolio_value)
                 analyzer.display_portfolio_iv()
+            
         except Exception as e:
             st.error(f"Error: {e}")
